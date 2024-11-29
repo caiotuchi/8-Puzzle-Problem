@@ -70,7 +70,46 @@ def a_star_solver(start_puzzle):
 
     return None  # Não há solução
 
+def greedy_solver(start_puzzle):
+    start = tuple(tuple(row) for row in start_puzzle)
+    goal = ((1, 2, 3), (4, 5, 6), (7, 8, 0))
 
+    # Fila de prioridade (min-heap) baseada na heurística
+    open_list = []
+    heapq.heappush(open_list, (manhattan_distance(start_puzzle), start, None))
+    visited = set()
+    visited.add(start)
+
+    came_from = {}
+
+    while open_list:
+        _, current, move = heapq.heappop(open_list)
+
+        if current == goal:
+            # Reconstruir caminho
+            path = []
+            while current in came_from:
+                path.append(came_from[current][1])
+                current = came_from[current][0]
+            path.reverse()
+            return path
+
+        # Encontrar o espaço vazio
+        empty_i, empty_j = [(x, y) for x in range(3) for y in range(3) if current[x][y] == 0][0]
+
+        # Explorar os movimentos válidos
+        for di, dj in get_valid_moves(empty_i, empty_j):
+            ni, nj = empty_i + di, empty_j + dj
+            new_puzzle = [list(row) for row in current]
+            new_puzzle[empty_i][empty_j], new_puzzle[ni][nj] = new_puzzle[ni][nj], new_puzzle[empty_i][empty_j]
+            new_puzzle = tuple(tuple(row) for row in new_puzzle)
+
+            if new_puzzle not in visited:
+                visited.add(new_puzzle)
+                heapq.heappush(open_list, (manhattan_distance(new_puzzle), new_puzzle, (ni, nj)))
+                came_from[new_puzzle] = (current, (ni, nj))
+
+    return None  # Não há solução
 
 def is_solvable(puzzle):
     # Converte o puzzle para uma lista unidimensional

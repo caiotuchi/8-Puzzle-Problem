@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import time
-from game import shuffle_puzzle, move_piece, a_star_solver, manhattan_distance, check_win
+from game import shuffle_puzzle, move_piece, a_star_solver, greedy_solver, check_win
 
 # Função para atualizar a interface gráfica com o estado atual do puzzle
 def update_puzzle(puzzle, buttons):
@@ -66,6 +66,16 @@ def solve_game_a_star(puzzle, buttons, root):
     Resolve o puzzle usando A* e mostra a solução passo a passo.
     """
     path = a_star_solver(puzzle)
+    if path:
+        show_solution(path, puzzle, buttons, root)
+    else:
+        messagebox.showinfo("Não é possível resolver", "Não há solução para o puzzle!")
+
+def solve_game_greedy(puzzle, buttons, root):
+    """
+    Resolve o puzzle usando a busca gulosa e mostra a solução passo a passo.
+    """
+    path = greedy_solver(puzzle)
     if path:
         show_solution(path, puzzle, buttons, root)
     else:
