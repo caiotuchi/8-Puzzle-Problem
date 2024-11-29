@@ -25,7 +25,6 @@ def get_valid_moves(i, j):
     return valid_moves
 
 # Função A* para resolver o puzzle
-# Função A* para resolver o puzzle
 def a_star_solver(start_puzzle):
     start = tuple(tuple(row) for row in start_puzzle)
     goal = ((1, 2, 3), (4, 5, 6), (7, 8, 0))

@@ -13,11 +13,22 @@ def update_puzzle(puzzle, buttons):
             buttons[i][j].config(text=str(value) if value != 0 else "", state="normal" if value != 0 else "disabled")
 
 # Função para mostrar as peças sendo movidas uma por vez
-def show_solution(path, puzzle, buttons):
+def show_solution(path, puzzle, buttons, root):
+    """
+    Mostra a solução passo a passo na interface gráfica.
+    """
     for move in path:
-        time.sleep(0.5)  # Pausa para mostrar cada movimento
+        # Aplicar o movimento ao puzzle
         puzzle = move_piece(move[0], move[1], puzzle)
-        update_puzzle(puzzle, buttons)  # Atualiza a interface a cada movimento
+        
+        # Atualizar os botões na interface gráfica
+        update_puzzle(puzzle, buttons)
+        
+        # Forçar atualização da interface gráfica
+        root.update_idletasks()
+        
+        # Pausa para visualizar o movimento
+        time.sleep(0.5)  # Ajuste o tempo conforme necessário
 
 # Função principal para criar a interface gráfica
 def create_gui(puzzle):
@@ -35,22 +46,31 @@ def create_gui(puzzle):
             buttons[i][j].grid(row=i, column=j)
 
     # Botão "Começar" / "Recomeçar"
-    start_button = tk.Button(root, text="Começar", width=10, height=2, command=lambda: start_game(puzzle, buttons, start_button))
+    start_button = tk.Button(root, text="Começar", width=10, height=4, command=lambda: start_game(puzzle, buttons, start_button))
     start_button.grid(row=3, column=1)
 
-    # Botão "Resolver"
-    solve_button = tk.Button(root, text="Resolver", width=10, height=2, command=lambda: solve_game(puzzle, buttons))
+    # Botão "Resolver A*"
+    solve_button = tk.Button(root, text="Resolver A*", width=10, height=4, command=lambda: solve_game_a_star(puzzle, buttons, root))
     solve_button.grid(row=3, column=0)
+
+    # Botão "Resolver Gulosa"
+    solve_button = tk.Button(root, text="Resolver\nGulosa", width=10, height=4, command=lambda: solve_game_greedy(puzzle, buttons, root))
+    solve_button.grid(row=3, column=2)
 
     root.mainloop()
 
+
 # Função para resolver o puzzle
-def solve_game(puzzle, buttons):
+def solve_game_a_star(puzzle, buttons, root):
+    """
+    Resolve o puzzle usando A* e mostra a solução passo a passo.
+    """
     path = a_star_solver(puzzle)
     if path:
-        show_solution(path, puzzle, buttons)
+        show_solution(path, puzzle, buttons, root)
     else:
         messagebox.showinfo("Não é possível resolver", "Não há solução para o puzzle!")
+
 
 # Função para iniciar o jogo e embaralhar o puzzle
 def start_game(puzzle, buttons, start_button):
